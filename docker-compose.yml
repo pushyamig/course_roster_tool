@@ -1,0 +1,43 @@
+version: '3.7'
+
+services:
+
+  db:
+    image: mysql:5.7.22
+    restart: on-failure
+    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+    ports:
+      - "5307:3306"
+    env_file:
+      - .env
+    container_name: course_roster_tool_mysql
+  web:
+    build:
+     context: .
+     args:
+       TZ: ${TZ}
+    command: bash -c "./start.sh"
+    volumes:
+      - .:/code:delegated
+      - /code/node_modules/
+      - /code/static/
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - frontend_watcher
+    env_file:
+      - .env
+    environment:
+      - GUNICORN_RELOAD=True
+      - LOCALHOST_PORT=8000
+    container_name: course_roster_tool
+  frontend_watcher:
+    build:
+      context: .
+      target: node-webpack
+    command: sh -c "tar zxvf node_modules/all_symlinks.tgz && npm run watch"
+    volumes:
+      - .:/usr/src/app:delegated
+      - /usr/src/app/node_modules/
+    container_name: frontend_watcher

@@ -1,0 +1,19 @@
+
+{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Welcome Home {% endblock %}</title>
+</head>
+<body>
+{% block pagecontent %}
+<p>
+this is home page
+</p>
+<a href="{% url 'home' %}">Go Home</a>
+<a href="{% url 'about' %}">About This Site</a>
+{% endblock %}
+</body>
+</html>
